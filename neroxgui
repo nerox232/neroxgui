@@ -1,0 +1,759 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+local TweenService = game:GetService("TweenService")
+
+-- Yükleme ekranı (4 saniye)
+local loadingGui = Instance.new("ScreenGui")
+loadingGui.Name = "NeroxLoading"
+loadingGui.Parent = PlayerGui
+loadingGui.ResetOnSpawn = false
+
+local loadFrame = Instance.new("Frame", loadingGui)
+loadFrame.Size = UDim2.new(0, 400, 0, 120)
+loadFrame.Position = UDim2.new(0.5, -200, 0.5, -60)
+loadFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+loadFrame.BorderSizePixel = 0
+loadFrame.ClipsDescendants = true
+local loadCorner = Instance.new("UICorner", loadFrame)
+loadCorner.CornerRadius = UDim.new(0, 12)
+
+local loadText = Instance.new("TextLabel", loadFrame)
+loadText.Size = UDim2.new(1, -40, 0, 40)
+loadText.Position = UDim2.new(0, 20, 0, 10)
+loadText.BackgroundTransparency = 1
+loadText.Text = "Nerox Gui 1.0 Yükleniyor..."
+loadText.Font = Enum.Font.GothamBold
+loadText.TextColor3 = Color3.new(1, 1, 1)
+loadText.TextSize = 22
+loadText.TextXAlignment = Enum.TextXAlignment.Left
+
+local loadBarBg = Instance.new("Frame", loadFrame)
+loadBarBg.Size = UDim2.new(1, -40, 0, 20)
+loadBarBg.Position = UDim2.new(0, 20, 0, 70)
+loadBarBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+loadBarBg.BorderSizePixel = 0
+local loadBarCorner = Instance.new("UICorner", loadBarBg)
+loadBarCorner.CornerRadius = UDim.new(0, 10)
+
+local loadBarFill = Instance.new("Frame", loadBarBg)
+loadBarFill.Size = UDim2.new(0, 0, 1, 0)
+loadBarFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+loadBarFill.BorderSizePixel = 0
+local loadFillCorner = Instance.new("UICorner", loadBarFill)
+loadFillCorner.CornerRadius = UDim.new(0, 10)
+
+-- Yükleme animasyonu 4 saniye tween ile
+local tweenInfo = TweenInfo.new(4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local tween = TweenService:Create(loadBarFill, tweenInfo, {Size = UDim2.new(1,0,1,0)})
+tween:Play()
+tween.Completed:Wait()
+task.wait(0.5)
+loadingGui:Destroy()
+
+-- ANA GUI
+local gui = Instance.new("ScreenGui", PlayerGui)
+gui.Name = "NeroxGui"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+
+local mainFrame = Instance.new("Frame", gui)
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 600, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -300, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+local mainCorner = Instance.new("UICorner", mainFrame)
+mainCorner.CornerRadius = UDim.new(0, 15)
+
+-- Sürükleme animasyonu (pencere sürüklenirken hafif şeffaf olsun)
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local fadeIn = TweenService:Create(mainFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.2})
+        fadeIn:Play()
+    end
+end)
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local fadeOut = TweenService:Create(mainFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0})
+        fadeOut:Play()
+    end
+end)
+
+-- Top bar
+local topBar = Instance.new("Frame", mainFrame)
+topBar.Size = UDim2.new(1, 0, 0, 40)
+topBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+topBar.BorderSizePixel = 0
+local topBarCorner = Instance.new("UICorner", topBar)
+topBarCorner.CornerRadius = UDim.new(0, 15)
+
+local titleLabel = Instance.new("TextLabel", topBar)
+titleLabel.Size = UDim2.new(0.5, 0, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Nerox Gui 1.0"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 22
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Kapatma ve küçültme butonları
+local closeButton = Instance.new("TextButton", topBar)
+closeButton.Size = UDim2.new(0, 35, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 70, 70)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 20
+closeButton.AutoButtonColor = false
+local closeCorner = Instance.new("UICorner", closeButton)
+closeCorner.CornerRadius = UDim.new(0, 6)
+
+local minimizeButton = Instance.new("TextButton", topBar)
+minimizeButton.Size = UDim2.new(0, 35, 0, 30)
+minimizeButton.Position = UDim2.new(1, -85, 0, 5)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+minimizeButton.Text = "-"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 28
+minimizeButton.AutoButtonColor = false
+local minCorner = Instance.new("UICorner", minimizeButton)
+minCorner.CornerRadius = UDim.new(0, 6)
+
+-- Buton hover animasyonları için helper
+local function addHoverEffect(button)
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70,70,70), TextColor3 = Color3.new(1,1,1)}):Play()
+        TweenService:Create(button, TweenInfo.new(0.2), {TextSize = 20}):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40,40,40), TextColor3 = Color3.new(1,1,1)}):Play()
+        TweenService:Create(button, TweenInfo.new(0.2), {TextSize = 18}):Play()
+    end)
+end
+
+-- Sekmeler listesi
+local tabList = Instance.new("ScrollingFrame", mainFrame)
+tabList.Size = UDim2.new(0, 140, 1, -50)
+tabList.Position = UDim2.new(0, 10, 0, 45)
+tabList.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+tabList.BorderSizePixel = 0
+tabList.ScrollBarThickness = 5
+local tabListCorner = Instance.new("UICorner", tabList)
+tabListCorner.CornerRadius = UDim.new(0, 10)
+local tabListLayout = Instance.new("UIListLayout", tabList)
+tabListLayout.Padding = UDim.new(0, 6)
+tabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Sağdaki içerik çerçevesi
+local contentFrame = Instance.new("Frame", mainFrame)
+contentFrame.Size = UDim2.new(1, -160, 1, -50)
+contentFrame.Position = UDim2.new(0, 155, 0, 45)
+contentFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+contentFrame.BorderSizePixel = 0
+local contentCorner = Instance.new("UICorner", contentFrame)
+contentCorner.CornerRadius = UDim.new(0, 10)
+
+local contentLayout = Instance.new("UIListLayout", contentFrame)
+contentLayout.Padding = UDim.new(0, 6)
+contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Butonlara ikon ve sağa kaydırılmış yazı ekleme fonksiyonu
+local function createButtonWithIcon(text, iconAssetId)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 38)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.BorderSizePixel = 0
+    btn.AutoButtonColor = false
+    btn.Text = ""
+    
+    local btnCorner = Instance.new("UICorner", btn)
+    btnCorner.CornerRadius = UDim.new(0, 6)
+
+    local container = Instance.new("Frame", btn)
+    container.Size = UDim2.new(1, 0, 1, 0)
+    container.BackgroundTransparency = 1
+
+    local layout = Instance.new("UIListLayout", container)
+    layout.FillDirection = Enum.FillDirection.Horizontal
+    layout.VerticalAlignment = Enum.VerticalAlignment.Center
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    layout.Padding = UDim.new(0, 8)
+
+    if iconAssetId then
+        local icon = Instance.new("ImageLabel", container)
+        icon.Size = UDim2.new(0, 24, 0, 24)
+        icon.BackgroundTransparency = 1
+        icon.Image = iconAssetId
+        icon.ScaleType = Enum.ScaleType.Fit
+    end
+
+    local lbl = Instance.new("TextLabel", container)
+    lbl.BackgroundTransparency = 1
+    lbl.Size = UDim2.new(1, -32, 1, 0)
+    lbl.Text = text
+    lbl.Font = Enum.Font.Gotham
+    lbl.TextSize = 18
+    lbl.TextColor3 = Color3.new(1, 1, 1)
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+    addHoverEffect(btn)
+
+    return btn
+end
+
+-- Fonksiyon iskeletleri
+local function ChatlogsFonksiyonu()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local PlayerGui = player:WaitForChild("PlayerGui")
+
+    -- Önceki GUI varsa sil
+    pcall(function()
+        PlayerGui:FindFirstChild("ChatLogsGui"):Destroy()
+    end)
+
+    -- GUI oluştur
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "ChatLogsGui"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
+    gui.Parent = PlayerGui
+
+    -- Ana panel
+    local main = Instance.new("Frame")
+    main.Size = UDim2.new(0, 450, 0, 350)
+    main.Position = UDim2.new(0.5, -225, 0.5, -175)
+    main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    main.BorderSizePixel = 0
+    main.Active = true
+    main.Draggable = true
+    main.Parent = gui
+
+    -- Başlık
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.TextSize = 24
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Text = "Nerox Chatlogs"
+    titleLabel.Parent = main
+
+    -- Kapatma butonu
+    local close = Instance.new("TextButton")
+    close.Size = UDim2.new(0, 30, 0, 30)
+    close.Position = UDim2.new(1, -35, 0, 5)
+    close.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+    close.Text = "X"
+    close.Font = Enum.Font.SourceSansBold
+    close.TextColor3 = Color3.new(1, 1, 1)
+    close.TextSize = 18
+    close.Parent = main
+    close.MouseButton1Click:Connect(function()
+        gui:Destroy()
+    end)
+
+    -- Scroll alanı
+    local scroll = Instance.new("ScrollingFrame")
+    scroll.Size = UDim2.new(1, -20, 1, -65)
+    scroll.Position = UDim2.new(0, 10, 0, 35)
+    scroll.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    scroll.ScrollBarThickness = 6
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scroll.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+    scroll.Parent = main
+
+    -- UIListLayout
+    local layout = Instance.new("UIListLayout")
+    layout.Padding = UDim.new(0, 5)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Parent = scroll
+
+    -- Mesaj ekleme fonksiyonu
+    local function AddMsg(name, msg)
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -10, 0, 22)
+        label.BackgroundTransparency = 1
+        label.Font = Enum.Font.SourceSans
+        label.TextSize = 18
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Text = "[" .. name .. "]: " .. msg
+        label.Parent = scroll
+    end
+
+    -- Mevcut oyuncuların sohbetlerini dinle
+    for _, plr in ipairs(Players:GetPlayers()) do
+        plr.Chatted:Connect(function(msg)
+            AddMsg(plr.Name, msg)
+        end)
+    end
+
+    -- Yeni oyuncular eklendiğinde sohbetlerini dinle
+    Players.PlayerAdded:Connect(function(plr)
+        plr.Chatted:Connect(function(msg)
+            AddMsg(plr.Name, msg)
+        end)
+    end)
+
+    print("✅ Chatlogs GUI executor ortamında çalıştı.")
+end
+
+local function AntiTrackFonksiyonu()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- 1. Nametag (Head üzerindeki BillboardGui) sil
+    local function RemoveNameTag()
+        local head = character:FindFirstChild("Head")
+        if head then
+            for _, gui in ipairs(head:GetChildren()) do
+                if gui:IsA("BillboardGui") then
+                    gui:Destroy()
+                end
+            end
+        end
+    end
+    RemoveNameTag()
+
+    -- Gizli pozisyon olarak belirlenen koordinat
+    local hiddenPos = Vector3.new(3146.89, 35.33, -119.78)
+
+    -- 2. Pozisyonu gizlemek için metamethod override (executorlarda destek varsa)
+    local success, mt = pcall(function() return getrawmetatable(game) end)
+    if success and mt then
+        setreadonly(mt, false)
+        local oldIndex = mt.__index
+        mt.__index = newcclosure(function(self, key)
+            if self == character.HumanoidRootPart and (key == "Position" or key == "CFrame") then
+                if key == "Position" then
+                    return hiddenPos
+                elseif key == "CFrame" then
+                    return CFrame.new(hiddenPos)
+                end
+            end
+            return oldIndex(self, key)
+        end)
+        setreadonly(mt, true)
+    end
+
+    -- 3. Karakteri gizli pozisyona taşı
+    if character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(hiddenPos)
+    end
+
+    print("Anti Track fonksiyonu çalıştı ve gizli koordinat ayarlandı.")
+end
+
+local function AracKontrolFonksiyonu()
+    loadstring(game:HttpGet("https://pastebin.com/raw/ZqbjzH1p"))()
+    print("Araç Kontrol fonksiyonu çalıştı")
+end
+local function JerkOffToolFonksiyonu()
+    loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
+    print("Jerk Off Tool fonksiyonu çalıştı")
+end
+local function FlingTouchFonksiyonu()
+    -- BURAYA Fling Touch Fonksiyonu koy
+    print("Fling Touch fonksiyonu çalıştı")
+end
+local function JackGuiFonksiyonu()
+    loadstring(game:HttpGet("https://pastebin.com/raw/rH6NhNbS"))()
+    print("JJ çekme tamamlandı.")
+end
+local function HerkesiAsIzYapFonksiyonu()
+    local TextChatService = game:GetService("TextChatService")
+local Players = game:GetService("Players")
+
+local function bringAllPlayersFast()
+    local textChannel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+    if not textChannel then
+        warn("Chat kanalı bulunamadı.")
+        return
+    end
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then -- kendini dışla
+            local message = ":team " .. player.Name .. " As"
+            textChannel:SendAsync(message)
+            -- wait() kaldırıldı = maksimum hız
+        end
+    end
+end
+bringAllPlayersFast()
+    print("Herkesi As.İz Yap fonksiyonu çalıştı")
+end
+local function HerkeseResetAtFonksiyonu()
+    local TextChatService = game:GetService("TextChatService")
+local Players = game:GetService("Players")
+
+local function bringAllPlayersFast()
+    local textChannel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+    if not textChannel then
+        warn("Chat kanalı bulunamadı.")
+        return
+    end
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then -- kendini dışla
+            local message = ":re " .. player.Name
+            textChannel:SendAsync(message)
+            -- wait() kaldırıldı = maksimum hız
+        end
+    end
+end
+bringAllPlayersFast()
+    print("Herkese Reset At fonksiyonu çalıştı")
+end
+local function HerkeseBringAtFonksiyonu()
+    loadstring(game:HttpGet("https://pastebin.com/raw/Q8wibDBA"))()
+    print("Herkese Bring At fonksiyonu çalıştı")
+end
+local function HerkesiOldurFonksiyonu()
+    -- BURAYA "Herkesi Öldür (İsyancı olman gerek)" FONKSİYONUNU KOY
+    print("Herkesi Öldür fonksiyonu çalıştı")
+end
+local function DuyuruAbuseFonksiyonu()
+    -- buraya fonksiyon
+    print("Herkesi Öldür fonksiyonu çalıştı")
+end
+local function bringAllPlayersFast()
+    print("Sahte Mesaj fonksiyonu çalıştı")
+end
+local function SahteMesajFonksiyonu()
+    loadstring(game:HttpGet("https://pastebin.com/raw/ipV8fBq2"))()
+    print("Sahte Mesaj fonksiyonu çalıştı")
+end
+    local function OlumsuzlukFonksiyonu()
+    loadstring(game:HttpGet("https://pastebin.com/raw/y0qHN0dw"))()
+    print("Herkesi Öldür fonksiyonu çalıştı")
+end
+local function TepekoyAutofarmFonksiyonu()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/nerox232/neroxscript/refs/heads/main/autofarmbynerox.lua"))()
+    print("Tepeköy Autofarm fonksiyonu çalıştı")
+end
+local function TSKBaseFonksiyonu()
+    local hedefKonum = Vector3.new(3139.28, 50.13, -155.17)
+local player = game.Players.LocalPlayer
+local karakter = player.Character or player.CharacterAdded:Wait()
+
+if karakter and karakter:FindFirstChild("HumanoidRootPart") then
+    karakter.HumanoidRootPart.CFrame = CFrame.new(hedefKonum)
+    print("TSK Base'e ışınlandın!")
+else
+    warn("Karakter veya HumanoidRootPart bulunamadı.")
+end
+    print("TSK Base fonksiyonu çalıştı")
+end
+local function DenetimAlaniFonksiyonu()
+    local hedefKonum = Vector3.new(996.51, 37.36, -321.95)
+local player = game.Players.LocalPlayer
+local karakter = player.Character or player.CharacterAdded:Wait()
+
+if karakter and karakter:FindFirstChild("HumanoidRootPart") then
+    karakter.HumanoidRootPart.CFrame = CFrame.new(hedefKonum)
+    print("Denetim Alanı'na ışınlandın!")
+else
+    warn("Karakter veya HumanoidRootPart bulunamadı.")
+end
+    print("Denetim Alanı fonksiyonu çalıştı")
+end
+local function KafetaryaFonksiyonu()
+    local hedefKonum = Vector3.new(2980.25, 119.48, 369.42)
+local player = game.Players.LocalPlayer
+local karakter = player.Character or player.CharacterAdded:Wait()
+
+if karakter and karakter:FindFirstChild("HumanoidRootPart") then
+    karakter.HumanoidRootPart.CFrame = CFrame.new(hedefKonum)
+    print("Kafetarya'ya ışınlandın!")
+else
+    warn("Karakter veya HumanoidRootPart bulunamadı.")
+end
+    print("Kafetarya fonksiyonu çalıştı")
+end
+local function SivilBaseFonksiyonu()
+    local hedefKonum = Vector3.new(1016.96, 13.74, -1277.17)
+local player = game.Players.LocalPlayer
+local karakter = player.Character or player.CharacterAdded:Wait()
+
+if karakter and karakter:FindFirstChild("HumanoidRootPart") then
+    karakter.HumanoidRootPart.CFrame = CFrame.new(hedefKonum)
+    print("Sivil Base'e ışınlandın!")
+else
+    warn("Karakter veya HumanoidRootPart bulunamadı.")
+end
+    print("Sivil Base fonksiyonu çalıştı")
+end
+local function InfiniteYieldAdminFonksiyonu()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    print("Infinite Yield Admin fonksiyonu çalıştı")
+end
+local function TPToolFonksiyonu()
+    mouse = game.Players.LocalPlayer:GetMouse()
+tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "Click Teleport"
+tool.Activated:connect(function()
+local pos = mouse.Hit+Vector3.new(0,2.5,0)
+pos = CFrame.new(pos.X,pos.Y,pos.Z)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+end)
+tool.Parent = game.Players.LocalPlayer.Backpack
+    print("TP Tool fonksiyonu çalıştı")
+end
+local function SilentAimFonksiyonu()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()()
+    print("Silent Aim fonksiyonu çalıştı")
+end
+
+
+-- Buton isimlerine göre fonksiyon çağırma
+local function ButtonClicked(name)
+    if name == "Chatlogs" then
+        ChatlogsFonksiyonu()
+    elseif name == "Anti Track" then
+        AntiTrackFonksiyonu()
+    elseif name == "Araç Kontrol" then
+        AracKontrolFonksiyonu()
+    elseif name == "Ölümsüzlük" then
+        OlumsuzlukFonksiyonu()
+    elseif name == "Sahte Mesaj" then
+        SahteMesajFonksiyonu()
+    elseif name == "Duyuru Abuse" then
+        DuyuruAbuseFonksiyonu()
+    elseif name == "Jerk Off Tool" then
+        JerkOffToolFonksiyonu()
+    elseif name == "Fling Touch" then
+        FlingTouchFonksiyonu()
+    elseif name == "Jack Çekme Gui" then
+        JackGuiFonksiyonu()
+    elseif name == "Herkesi As.İz Yap" then
+        HerkesiAsIzYapFonksiyonu()
+    elseif name == "Herkese Reset At" then
+        HerkeseResetAtFonksiyonu()
+    elseif name == "Herkese Bring At" then
+        HerkeseBringAtFonksiyonu()
+    elseif name == "Herkesi Öldür (İsyancı olman gerek)" then
+        HerkesiOldurFonksiyonu()
+    elseif name == "Tepeköy Autofarm" then
+        TepekoyAutofarmFonksiyonu()
+    elseif name == "TSK Base" then
+        TSKBaseFonksiyonu()
+    elseif name == "Denetim Alanı" then
+        DenetimAlaniFonksiyonu()
+    elseif name == "Kafetarya" then
+        KafetaryaFonksiyonu()
+    elseif name == "Sivil Base" then
+        SivilBaseFonksiyonu()
+    elseif name == "Infinite Yield Admin" then
+        InfiniteYieldAdminFonksiyonu()
+    elseif name == "TP Tool" then
+        TPToolFonksiyonu()
+    elseif name == "Silent Aim" then
+        SilentAimFonksiyonu()
+    else
+        print(name .. " fonksiyonu tanımlı değil.")
+    end
+end
+
+-- Sekmeler ve butonlar
+local tabs = {
+    ["Ana Menü"] = {
+        -- Buraya Ana Menü butonları yok, footer ve avatar gösterilecek
+    },
+    ["Troll"] = {
+        {Name = "Chatlogs", Icon = "rbxassetid://6031094674"},
+        {Name = "Anti Track", Icon = "rbxassetid://6031094674"},
+        {Name = "Araç Kontrol", Icon = "rbxassetid://6023426915"},
+        {Name = "Ölümsüzlük", Icon = "rbxassetid://6023426915"},
+        {Name = "Jerk Off Tool", Icon = "rbxassetid://6023426915"},
+        {Name = "Fling Touch", Icon = "rbxassetid://6023426915"},
+    },
+    ["Jack"] = {
+        {Name = "Jack Çekme Gui", Icon = "rbxassetid://6023426915"},
+    },
+    ["Abuse"] = {
+        {Name = "Herkesi As.İz Yap", Icon = "rbxassetid://6031094674"},
+        {Name = "Duyuru Abuse", Icon = "rbxassetid://6031094674"},
+        {Name = "Herkese Reset At", Icon = "rbxassetid://6031094674"},
+        {Name = "Herkese Bring At", Icon = "rbxassetid://6031094674"},
+        {Name = "Herkesi Öldür (İsyancı olman gerek)", Icon = "rbxassetid://6031094674"},
+    },
+    ["Autofarm"] = {
+        {Name = "Tepeköy Autofarm", Icon = "rbxassetid://6031094674"},
+    },
+    ["Teleportlar"] = {
+        {Name = "TSK Base", Icon = "rbxassetid://6031094674"},
+        {Name = "Denetim Alanı", Icon = "rbxassetid://6031094674"},
+        {Name = "Kafetarya", Icon = "rbxassetid://6031094674"},
+        {Name = "Sivil Base", Icon = "rbxassetid://6031094674"},
+    },
+    ["Diğer"] = {
+        {Name = "Infinite Yield Admin", Icon = "rbxassetid://6031094674"},
+        {Name = "TP Tool", Icon = "rbxassetid://6031094674"},
+        {Name = "Sahte Mesaj", Icon = "rbxassetid://6031094674"},
+    },
+    ["Discord"] = {
+        -- Discord sekmesi, sadece büyük yazı
+    }
+}
+
+-- İçerik temizleme
+local function clearContent()
+    for _, child in pairs(contentFrame:GetChildren()) do
+        if not child:IsA("UIListLayout") and not child:IsA("UITextSizeConstraint") then
+            child:Destroy()
+        end
+    end
+end
+
+-- Ana Menü’ye avatar, isim, hoşgeldin yazısı ekleme
+local function setupAnaMenu()
+    clearContent()
+
+    local welcomeLabel = Instance.new("TextLabel", contentFrame)
+    welcomeLabel.Size = UDim2.new(1, -20, 0, 30)
+    welcomeLabel.Position = UDim2.new(0, 10, 0, 10)
+    welcomeLabel.BackgroundTransparency = 1
+    welcomeLabel.Text = "Hoşgeldin!"
+    welcomeLabel.Font = Enum.Font.GothamBold
+    welcomeLabel.TextSize = 28
+    welcomeLabel.TextColor3 = Color3.fromRGB(100, 180, 255)
+    welcomeLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Profil çerçevesi
+    local profileFrame = Instance.new("Frame", contentFrame)
+    profileFrame.Size = UDim2.new(1, -20, 0, 70)
+    profileFrame.Position = UDim2.new(0, 10, 0, 50)
+    profileFrame.BackgroundTransparency = 1
+
+    -- Profil foto dairesi
+    local avatarCircle = Instance.new("ImageLabel", profileFrame)
+    avatarCircle.Size = UDim2.new(0, 60, 0, 60)
+    avatarCircle.Position = UDim2.new(0, 0, 0, 0)
+    avatarCircle.BackgroundTransparency = 1
+    avatarCircle.Image = "rbxthumb://type=AvatarHeadShot&id=" .. player.UserId .. "&w=420&h=420"
+    local circleCorner = Instance.new("UICorner", avatarCircle)
+    circleCorner.CornerRadius = UDim.new(1, 0)
+
+    -- Oyuncu adı
+    local nameLabel = Instance.new("TextLabel", profileFrame)
+    nameLabel.Size = UDim2.new(1, -70, 1, 0)
+    nameLabel.Position = UDim2.new(0, 70, 0, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = player.Name
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextSize = 24
+    nameLabel.TextColor3 = Color3.new(1,1,1)
+    nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    nameLabel.TextYAlignment = Enum.TextYAlignment.Center
+end
+
+-- Discord sekmesi içerik
+local function setupDiscord()
+    clearContent()
+    local discordLabel = Instance.new("TextLabel", contentFrame)
+    discordLabel.Size = UDim2.new(1, -20, 0, 60)
+    discordLabel.Position = UDim2.new(0, 10, 0, 10)
+    discordLabel.BackgroundTransparency = 1
+    discordLabel.Text = "discord.gg/xM3NURznym"
+    discordLabel.Font = Enum.Font.GothamBold
+    discordLabel.TextSize = 32
+    discordLabel.TextColor3 = Color3.fromRGB(100, 180, 255)
+    discordLabel.TextXAlignment = Enum.TextXAlignment.Center
+    discordLabel.TextYAlignment = Enum.TextYAlignment.Center
+end
+
+-- İçeriği oluştur (butonlar / özel içerik)
+local function createContentButtons(buttonList, tabName)
+    if tabName == "Ana Menü" then
+        setupAnaMenu()
+    elseif tabName == "Discord" then
+        setupDiscord()
+    else
+        clearContent()
+        for i, btnData in ipairs(buttonList) do
+            local btn = createButtonWithIcon(btnData.Name, btnData.Icon)
+            btn.Parent = contentFrame
+            btn.Position = UDim2.new(0, 10, 0, (i-1)*45 + 10)
+
+            btn.MouseButton1Click:Connect(function()
+                ButtonClicked(btnData.Name)
+            end)
+        end
+    end
+end
+
+-- Sekme butonları yaratma
+local tabButtons = {}
+
+local function createTabButton(tabName)
+    local btn = Instance.new("TextButton", tabList)
+    btn.Size = UDim2.new(1, -12, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.BorderSizePixel = 0
+    btn.Text = tabName
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 18
+    local btnCorner = Instance.new("UICorner", btn)
+    btnCorner.CornerRadius = UDim.new(0, 8)
+
+    addHoverEffect(btn)
+
+    btn.MouseButton1Click:Connect(function()
+        createContentButtons(tabs[tabName], tabName)
+    end)
+
+    return btn
+end
+
+-- Sekmeler sıralı oluşturuluyor
+local tabNamesOrdered = {"Ana Menü", "Troll", "Jack", "Abuse", "Autofarm", "Teleportlar", "Diğer", "Discord"}
+
+for _, tabName in ipairs(tabNamesOrdered) do
+    table.insert(tabButtons, createTabButton(tabName))
+end
+
+-- İlk olarak Ana Menü seçili gelsin
+createContentButtons(tabs["Ana Menü"], "Ana Menü")
+
+-- Minimize ve kapatma işlevleri
+local minimized = false
+
+minimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        contentFrame.Visible = false
+        tabList.Visible = false
+        TweenService:Create(mainFrame, TweenInfo.new(0.3), {Size = UDim2.new(0, 300, 0, 45)}):Play()
+    else
+        contentFrame.Visible = true
+        tabList.Visible = true
+        TweenService:Create(mainFrame, TweenInfo.new(0.3), {Size = UDim2.new(0, 600, 0, 400)}):Play()
+    end
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    -- Fade out animasyon
+    for _, obj in ipairs(gui:GetDescendants()) do
+        if obj:IsA("TextLabel") or obj:IsA("TextButton") then
+            TweenService:Create(obj, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+        elseif obj:IsA("ImageLabel") then
+            TweenService:Create(obj, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+        elseif obj:IsA("Frame") then
+            TweenService:Create(obj, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        end
+    end
+    task.wait(0.35)
+    gui:Destroy()
+end)
